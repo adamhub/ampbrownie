@@ -1,4 +1,4 @@
 ampbrownie
 ==========
 
-Rasperry Pi Guitar Effects Processor
+Quite an infant of a project. Checout http://ampbrownie.com for more information. 
