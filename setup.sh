@@ -24,7 +24,7 @@ allow-hotplug wlan0
 iface wlan0 inet manual
 wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
 
-auth eth0
+auto eth0
 iface eth0 inet static
 #your static IP
 address $NEW_STATIC_IP
