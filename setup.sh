@@ -71,7 +71,7 @@ then
     #sudo apt-get install vim
     sudo apt-get --reinstall install xauth # to make x11 forwarding work
     #read -p "Jack install will ask you if you want to adjust things for realtime control. Answer yes to that. Press enter now."
-    echo "jackd1 jackd/tweak_rt_limits boolean true"|debconf-set-selections
+    echo "jackd1 jackd/tweak_rt_limits boolean true"|sudo debconf-set-selections
     sudo DEBCONF_FRONTEND=noninteractive apt-get --no-install-recommends install jackd1
     #sudo apt-get --no-install-recommends install jackd1
     sudo modprobe -r snd-bcm2835
@@ -101,8 +101,8 @@ then
     sudo alsa force-reload
 
     echo "forcing usb 1.1 and turning off turbo mode on eth..."
-    # >> means append
-    sudo echo "dwc_otg.speed=1 smsc95xx.turbo_mode=N" >> /boot/cmdline.txt
+    # has to prepend to front of file 
+    sudo sed -i '1s/^/dwc_otg\.speed\=1\ smsc95xx\.turbo_mode\=N\ /' /boot/cmdline.txt
 
     echo "this script has finished. Reboot, then you can run jackstart, and then jalv... "
 
