@@ -68,12 +68,12 @@ then
     echo "Running apt-get update..."
     sudo apt-get update
     echo "Installing Jack and friends"
-    #sudo apt-get install vim
     sudo apt-get --reinstall install xauth # to make x11 forwarding work
     #read -p "Jack install will ask you if you want to adjust things for realtime control. Answer yes to that. Press enter now."
     echo "jackd1 jackd/tweak_rt_limits boolean true"|sudo debconf-set-selections
-    sudo DEBCONF_FRONTEND=noninteractive apt-get --no-install-recommends install jackd1
-    #sudo apt-get --no-install-recommends install jackd1
+    #sudo DEBCONF_FRONTEND=noninteractive apt-get --no-install-recommends install jackd1
+    read -p "When asked to optimize for realtime, answer yes. ok?"
+    sudo apt-get install jackd1
     sudo modprobe -r snd-bcm2835
     sudo apt-get install libcanberra-gtk-module
     sudo apt-get install jalv
