@@ -10,12 +10,8 @@ then
 
     ### network setup  ###
 
-    # add(append) google nameserver 
-    #sudo echo "nameserver 8.8.8.8" >> /etc/resolv.conf
-    #echo "Updated named servers...."\n
-
-    # create static ip
-    # blank out file
+    # add(append) google nameserver and create static IP
+    # first, blank out file
     sudo cat /dev/null > /etc/network/interfaces
     # print new contents
     sudo printf '%s\n' "auto lo
@@ -40,14 +36,16 @@ then
     network 192.168.1.0
     dns-nameservers 8.8.8.8 8.8.4.4
     " >> /etc/network/interfaces
-    read -p "Locked to static IP to $NEW_STATIC_IP so take note....Press Enter now."
+    read -p "Locked to static IP to $NEW_STATIC_IP so take note. Press Enter to move on."
 
 
     # open up raspbian config
     read -p "Now the raspi-config is going to be opened for you to edit.
     Do these two things:
+
     a) overclock to "medium"
     b) expand_rootfs to fill entire sd card
+
     Don't restart it yet, wait until this script finishes.
     Press enter to continue."
 
@@ -55,13 +53,13 @@ then
 
     # todo: make a stopping point here and reboot. when script runs second time, start from here.
     # for now...
-    read -p "Reboot please. Then start the script again, and run part 2. Enter to reboot"
+    read -p "Reboot please. Then start the script again, and run part 2. Press Enter to reboot"
     sudo reboot
 
 elif [ $STARTFROM = 2 ]
 then
 
-    echo "Adding Autostatic's ppms..."
+    echo "Adding Autostatic's ppa..."
     # force ipv4 to resolve autostatic.com
     wget -4 -O - http://rpi.autostatic.com/autostatic.gpg.key | sudo apt-key add -
     sudo wget -4 -O /etc/apt/sources.list.d/autostatic-audio-raspbian.list http://rpi.autostatic.com/autostatic-audio-raspbian.list
@@ -73,7 +71,7 @@ then
     #read -p "Jack install will ask you if you want to adjust things for realtime control. Answer yes to that. Press enter now."
     echo "jackd1 jackd/tweak_rt_limits boolean true"|sudo debconf-set-selections
     #sudo DEBCONF_FRONTEND=noninteractive apt-get --no-install-recommends install jackd1
-    read -p "When asked to optimize for realtime, answer yes. ok?"
+    read -p "When asked to optimize for realtime, answer yes. Press enter to continue."
     sudo apt-get install jackd1
     sudo modprobe -r snd-bcm2835
     sudo apt-get install libcanberra-gtk-module
@@ -106,12 +104,6 @@ then
     sudo sed -i '1s/^/dwc_otg\.speed\=1\ smsc95xx\.turbo_mode\=N\ /' /boot/cmdline.txt
 
     echo "this script has finished. Reboot, then you can run jackstart, and then jalv... "
-
-    #todo
-    #echo "Setting Guitarix/Jackd ect. to startup on boot so you can plug and play..."
-
-    #todo
-    #echo "Looks like setup is completed. You can run 'ampbrownie start' or 'ampbrownie stop' as you please.
 
 else
     echo "Input not recognized, try again."
