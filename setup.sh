@@ -1,6 +1,6 @@
 #! /bin/bash
 
-echo "Start from part 1 or 2 of this script? (1/2): "
+echo "Start from part 1 or 2 (post-restart) of this script? (1/2): "
 read -e STARTFROM
 
 if [ $STARTFROM = 1 ]
@@ -55,7 +55,8 @@ then
 
     # todo: make a stopping point here and reboot. when script runs second time, start from here.
     # for now...
-    read -p "Reboot please...."
+    read -p "Reboot please. Then start the script again, and run part 2. Enter to reboot"
+    sudo reboot
 
 elif [ $STARTFROM = 2 ]
 then
