@@ -59,7 +59,7 @@ then
 elif [ $STARTFROM = 2 ]
 then
 
-    echo "Adding Autostatic's ppa..."
+    echo "Adding AutoStatic's ppa..."
     # force ipv4 to resolve autostatic.com
     wget -4 -O - http://rpi.autostatic.com/autostatic.gpg.key | sudo apt-key add -
     sudo wget -4 -O /etc/apt/sources.list.d/autostatic-audio-raspbian.list http://rpi.autostatic.com/autostatic-audio-raspbian.list
@@ -72,12 +72,12 @@ then
     echo "jackd1 jackd/tweak_rt_limits boolean true"|sudo debconf-set-selections
     #sudo DEBCONF_FRONTEND=noninteractive apt-get --no-install-recommends install jackd1
     read -p "When asked to optimize for realtime, answer yes. Press enter to continue."
-    sudo apt-get install jackd1
+    sudo apt-get --no-install-recommends -y install jackd1
     sudo modprobe -r snd-bcm2835
-    sudo apt-get install libcanberra-gtk-module
-    sudo apt-get install jalv
-    sudo apt-get install guitarix
-    sudo apt-get install qjackctl
+    sudo apt-get --no-install-recommends -y install libcanberra-gtk-module
+    sudo apt-get --no-install-recommends -y install jalv
+    sudo apt-get --no-install-recommends -y install guitarix
+    sudo apt-get --no-install-recommends -y install qjackctl
     # a good jack startup script
     wget -4 https://raw.github.com/AutoStatic/scripts/rpi/rpi/jackstart
 
@@ -94,7 +94,7 @@ then
     # -ie is for in stream editing
     sudo sed -ie 's/snd\-bcm2835/#snd\-bcm2835/g'  /etc/modules
 
-    echo "setting defualt sound card to usb..."
+    echo "setting default sound card to usb..."
 
     sudo sed -ie 's/snd\-usb\-audio\ index\=\-2/snd\-usb\-audio\ index\=0/g' /etc/modprobe.d/alsa-base.conf
     sudo alsa force-reload
