@@ -78,6 +78,7 @@ then
     sudo apt-get --no-install-recommends -y install jalv
     sudo apt-get --no-install-recommends -y install guitarix
     sudo apt-get --no-install-recommends -y install qjackctl
+    sudo apt-get --no-install-recommends -y install aj-snapshot
     # a good jack startup script
     wget -4 https://raw.github.com/AutoStatic/scripts/rpi/rpi/jackstart
 
