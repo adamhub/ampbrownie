@@ -18,9 +18,6 @@ then
 
     iface lo inet loopback
 
-    #disable dhcp
-    #iface eth0 inet dhcp
-
     allow-hotplug wlan0
     iface wlan0 inet manual
     wpa-roam /etc/wpa_supplicant/wpa_supplicant.conf
@@ -73,30 +70,19 @@ then
     #sudo DEBCONF_FRONTEND=noninteractive apt-get --no-install-recommends install jackd1
     read -p "When asked to optimize for realtime, answer yes. Press enter to continue."
     sudo apt-get --no-install-recommends -y install jackd1
-    sudo modprobe -r snd-bcm2835
     sudo apt-get --no-install-recommends -y install libcanberra-gtk-module
     sudo apt-get --no-install-recommends -y install jalv
     sudo apt-get --no-install-recommends -y install guitarix
     sudo apt-get --no-install-recommends -y install qjackctl
     sudo apt-get --no-install-recommends -y install aj-snapshot
-    # a good jack startup script
-    wget -4 https://raw.github.com/AutoStatic/scripts/rpi/rpi/jackstart
+    # is this redundant? 
+    sudo modprobe -r snd-bcm2835
 
-
-    ### Prep for realtime audio ###
-    echo "increasing shared memory..."
-    sudo mount -o remount,size=128M /dev/shm
-    #todo, put in jackd startup script
-
-    echo "turning off CPU scaling"
-    echo -n performance | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-
-    echo "disabling onboard sound card..."
+        echo "disabling onboard sound card..."
     # -ie is for in stream editing
     sudo sed -ie 's/snd\-bcm2835/#snd\-bcm2835/g'  /etc/modules
 
     echo "setting default sound card to usb..."
-
     sudo sed -ie 's/snd\-usb\-audio\ index\=\-2/snd\-usb\-audio\ index\=0/g' /etc/modprobe.d/alsa-base.conf
     sudo alsa force-reload
 
@@ -104,7 +90,21 @@ then
     # has to prepend to front of file 
     sudo sed -i '1s/^/dwc_otg\.speed\=1\ smsc95xx\.turbo_mode\=N\ /' /boot/cmdline.txt
 
-    echo "this script has finished. Reboot, then you can run jackstart, and then jalv... "
+    # copy the guitarrix configs and settings to the right place
+    mkdir .config
+    mkdir .config/guitarix
+    cp ampbrownie/gx_head_rc .config/guitarix/gx_head_rc
+    cp ampbrownie/ampbrownie.gx .config/guitarix/plugins/
+
+    # install init scripts so AmpBrownie starts up on boot
+    cp ~/ampbrownie/init_scripts/ampbrownie.sh /etc/init.d/ampbrownie.sh
+    sudo chmod /etc/init.d/ampbrownie.sh
+    sudo update-rc.d ampbrownie.sh defaults
+
+    echo "Setup has finished. You will want to:
+         - reboot and remove your keyboard an mouse
+	 - have your guitar/soundcard/midi controller hooked up
+         - play some sweet tunes" 
 
 else
     echo "Input not recognized, try again."

@@ -1,0 +1,27 @@
+#! /bin/sh
+# /etc/init.d/ampbrownie
+#
+
+
+# Carry out specific functions when asked to by the system
+case "$1" in
+  start)
+    echo "Starting script blah "
+    echo "Could do more here"
+    ;;
+  stop)
+    echo "Stopping script blah"
+    echo "Could do more here"
+    ;;
+  *)
+    echo "Usage: /etc/init.d/blah {start|stop}"
+    exit 1
+    ;;
+esac
+
+start(){
+    /home/pi/ampbrownie/jackstart
+   guitarix -N 
+}
+
+exit
