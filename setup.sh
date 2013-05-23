@@ -71,16 +71,13 @@ then
     sudo apt-get --no-install-recommends -y install guitarix
     sudo apt-get --no-install-recommends -y install qjackctl
     sudo apt-get --no-install-recommends -y install aj-snapshot
-    # is this redundant? 
-    sudo modprobe -r snd-bcm2835
 
-        echo "disabling onboard sound card..."
+    echo "disabling onboard sound card..."
     # -i is for in stream editing
     sudo sed -i 's/snd\-bcm2835/#snd\-bcm2835/g'  /etc/modules
 
     echo "setting default sound card to usb..."
     sudo sed -i 's/snd\-usb\-audio\ index\=\-2/snd\-usb\-audio\ index\=0/g' /etc/modprobe.d/alsa-base.conf
-    sudo alsa force-reload
 
     echo "forcing usb 1.1 and turning off turbo mode on eth..."
     # has to prepend to front of file 
