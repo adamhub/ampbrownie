@@ -37,11 +37,7 @@ then
 
 
     # open up raspbian config
-    read -p "Now the raspi-config is going to be opened for you to edit.
-    Do these two things:
-
-    a) overclock to "medium"
-    b) expand_rootfs to fill entire sd card
+    read -p "Now the raspi-config is going to be opened for you to expand_rootfs to fill entire sd card.
 
     Don't restart it yet, wait until this script finishes.
     Press enter to continue."
@@ -56,7 +52,7 @@ then
 elif [ $STARTFROM = 2 ]
 then
 
-    echo "Adding AutoStatic's ppa..."
+    echo "Adding AutoStatic's RPi repository..."
     # force ipv4 to resolve autostatic.com
     wget -4 -O - http://rpi.autostatic.com/autostatic.gpg.key | sudo apt-key add -
     sudo wget -4 -O /etc/apt/sources.list.d/autostatic-audio-raspbian.list http://rpi.autostatic.com/autostatic-audio-raspbian.list
@@ -79,30 +75,34 @@ then
     sudo modprobe -r snd-bcm2835
 
         echo "disabling onboard sound card..."
-    # -ie is for in stream editing
-    sudo sed -ie 's/snd\-bcm2835/#snd\-bcm2835/g'  /etc/modules
+    # -i is for in stream editing
+    sudo sed -i 's/snd\-bcm2835/#snd\-bcm2835/g'  /etc/modules
 
     echo "setting default sound card to usb..."
-    sudo sed -ie 's/snd\-usb\-audio\ index\=\-2/snd\-usb\-audio\ index\=0/g' /etc/modprobe.d/alsa-base.conf
+    sudo sed -i 's/snd\-usb\-audio\ index\=\-2/snd\-usb\-audio\ index\=0/g' /etc/modprobe.d/alsa-base.conf
     sudo alsa force-reload
 
     echo "forcing usb 1.1 and turning off turbo mode on eth..."
     # has to prepend to front of file 
     sudo sed -i '1s/^/dwc_otg\.speed\=1\ smsc95xx\.turbo_mode\=N\ /' /boot/cmdline.txt
 
-    # copy the guitarrix configs and settings to the right place
-    mkdir .config
-    mkdir .config/guitarix
-    cp ampbrownie/gx_head_rc .config/guitarix/gx_head_rc
-    cp ampbrownie/ampbrownie.gx .config/guitarix/plugins/
+    # download the custom config.txt to /boot
+    sudo cp /boot/config.txt /boot/config.txt.orig
+    sudo wget -4 -O /boot/config.txt https://raw.github.com/adamhub/ampbrownie/master/config_ampbrownie.txt
+
+    # copy the guitarix configs and settings to the right place
+    mkdir -p $HOME/.config/guitarix/plugins
+    wget -4 -P $HOME/.config/guitarix https://raw.github.com/adamhub/ampbrownie/master/gx_head_rc
+    wget -4 -P $HOME/.config/guitarix/plugins https://raw.github.com/adamhub/ampbrownie/master/ampbrownie.gx
+    wget -4 -P $HOME/ampbrownie https://raw.github.com/adamhub/ampbrownie/master/init_scripts/ampbrownie
 
     # install init scripts so AmpBrownie starts up on boot
-    cp ~/ampbrownie/init_scripts/ampbrownie.sh /etc/init.d/ampbrownie.sh
-    sudo chmod /etc/init.d/ampbrownie.sh
-    sudo update-rc.d ampbrownie.sh defaults
+    sudo wget -4 -P /etc/init.d https://raw.github.com/adamhub/ampbrownie/master/init_scripts/ampbrownie
+    sudo chmod +x /etc/init.d/ampbrownie
+    sudo update-rc.d ampbrownie defaults
 
     echo "Setup has finished. You will want to:
-         - reboot and remove your keyboard an mouse
+         - reboot and remove your keyboard and mouse
 	 - have your guitar/soundcard/midi controller hooked up
          - play some sweet tunes" 
 
