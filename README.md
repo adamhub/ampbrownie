@@ -6,10 +6,10 @@ It prepares the PI for realtime audio, and installs the proper patched packages.
 
 Run it by doing the following:
 
-    wget https://raw.github.com/adamhub/ampbrownie/master/setup.sh
+    git clone git://github.com/adamhub/ampbrownie.git
 
 Then execute part one of the script:
 
-    sudo ./setup.sh
+    sudo ./ampbrownie/setup.sh
 
 Checkout <http://ampbrownie.com> for more information. 
