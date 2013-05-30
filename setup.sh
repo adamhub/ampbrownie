@@ -79,9 +79,9 @@ then
     # has to prepend to front of file 
     sed -i '1s/^/dwc_otg\.speed\=1\ smsc95xx\.turbo_mode\=N\ /' /boot/cmdline.txt
 
-    # download the custom config.txt to /boot
-    cp -a /boot/config.txt /boot/config.txt.orig
-    cp -a ./ampbrownie/config_ampbrownie.txt /boot/config.txt
+    # copy the custom config.txt to /boot
+    cp /boot/config.txt /boot/config.txt.orig
+    cp ./ampbrownie/config_ampbrownie.txt /boot/config.txt
     #wget -4 -O /boot/config.txt https://raw.github.com/adamhub/ampbrownie/master/config_ampbrownie.txt
 
     # copy the guitarix configs and settings to the right place
