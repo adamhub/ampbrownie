@@ -73,9 +73,6 @@ then
     apt-get --no-install-recommends -y install qjackctl
     apt-get --no-install-recommends -y install aj-snapshot
     
-    # adding realtime priority for jack
-    echo "@audio - rtprio 99" >  /etc/security/limits.conf  #getting permission denied!!!! sed could work though
-
     echo "disabling onboard sound card..."
     # -i is for in stream editing
     sed -i 's/snd\-bcm2835/#snd\-bcm2835/g'  /etc/modules
