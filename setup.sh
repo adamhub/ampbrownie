@@ -10,6 +10,8 @@ then
 
     ### network setup  ###
 
+    cp /etc/network/interfaces /etc/network/interfaces.orig
+
     # add(append) google nameserver and create static IP
     # first, blank out file
     cat /dev/null > /etc/network/interfaces
