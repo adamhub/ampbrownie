@@ -10,7 +10,7 @@ then
 
     ### network setup  ###
 
-    cp -a /etc/network/interfaces /etc/network/interfaces.orig
+    cp -a /etc/network/interfaces /etc/network/interfaces.orig.$(date +%F_%T)
 
     # add(append) google nameserver and create static IP
     # first, blank out file
@@ -80,7 +80,7 @@ then
     sed -i '1s/^/dwc_otg\.speed\=1\ smsc95xx\.turbo_mode\=N\ /' /boot/cmdline.txt
 
     # copy the custom config.txt to /boot
-    cp /boot/config.txt /boot/config.txt.orig
+    cp /boot/config.txt /boot/config.txt.orig.$(date +%F_%T)
     cp ./ampbrownie/config_ampbrownie.txt /boot/config.txt
     #wget -4 -O /boot/config.txt https://raw.github.com/adamhub/ampbrownie/master/config_ampbrownie.txt
 
