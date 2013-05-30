@@ -66,12 +66,7 @@ then
     #read -p "Jack install will ask you if you want to adjust things for realtime control. Answer yes to that. Press enter now."
     echo "jackd1 jackd/tweak_rt_limits boolean true"|debconf-set-selections
     #DEBCONF_FRONTEND=noninteractive apt-get --no-install-recommends install jackd1
-    apt-get --no-install-recommends -y install jackd1
-    apt-get --no-install-recommends -y install libcanberra-gtk-module
-    apt-get --no-install-recommends -y install jalv
-    apt-get --no-install-recommends -y install guitarix
-    apt-get --no-install-recommends -y install qjackctl
-    apt-get --no-install-recommends -y install aj-snapshot
+    apt-get --no-install-recommends -y install jackd1 libcanberra-gtk-module jalv guitarix qjackctl aj-snapshot
     
     echo "disabling onboard sound card..."
     # -i is for in stream editing
