@@ -64,13 +64,15 @@ then
     #read -p "Jack install will ask you if you want to adjust things for realtime control. Answer yes to that. Press enter now."
     echo "jackd1 jackd/tweak_rt_limits boolean true"|sudo debconf-set-selections
     #sudo DEBCONF_FRONTEND=noninteractive apt-get --no-install-recommends install jackd1
-    read -p "When asked to optimize for realtime, answer yes. Press enter to continue."
     sudo apt-get --no-install-recommends -y install jackd1
     sudo apt-get --no-install-recommends -y install libcanberra-gtk-module
     sudo apt-get --no-install-recommends -y install jalv
     sudo apt-get --no-install-recommends -y install guitarix
     sudo apt-get --no-install-recommends -y install qjackctl
     sudo apt-get --no-install-recommends -y install aj-snapshot
+    
+    # adding realtime priority for jack
+    sudo echo "@audio - rtprio 99" >  /etc/security/limits.conf  #getting permission denied!!!! sed could work though
 
     echo "disabling onboard sound card..."
     # -i is for in stream editing
