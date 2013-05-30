@@ -88,10 +88,12 @@ then
     sudo wget -4 -O /boot/config.txt https://raw.github.com/adamhub/ampbrownie/master/config_ampbrownie.txt
 
     # copy the guitarix configs and settings to the right place
-    mkdir -p $HOME/.config/guitarix/plugins
-    wget -4 -P $HOME/.config/guitarix https://raw.github.com/adamhub/ampbrownie/master/gx_head_rc
-    wget -4 -P $HOME/.config/guitarix/plugins https://raw.github.com/adamhub/ampbrownie/master/ampbrownie.gx
-    wget -4 -P $HOME/ampbrownie https://raw.github.com/adamhub/ampbrownie/master/init_scripts/ampbrownie
+    mkdir -p /home/pi/.config/guitarix/plugins
+    wget -4 -P /home/pi/.config/guitarix https://raw.github.com/adamhub/ampbrownie/master/gx_head_rc
+    wget -4 -P /home/pi/.config/guitarix/plugins https://raw.github.com/adamhub/ampbrownie/master/ampbrownie.gx
+    wget -4 -P /home/pi/ampbrownie https://raw.github.com/adamhub/ampbrownie/master/init_scripts/ampbrownie
+    sudo chown -R pi:pi /home/pi/.config
+    sudo chmod -R 777 /home/pi/.config
 
     # install init scripts so AmpBrownie starts up on boot
     sudo wget -4 -P /etc/init.d https://raw.github.com/adamhub/ampbrownie/master/init_scripts/ampbrownie
