@@ -10,7 +10,7 @@ then
 
     ### network setup  ###
 
-    cp /etc/network/interfaces /etc/network/interfaces.orig
+    cp -a /etc/network/interfaces /etc/network/interfaces.orig
 
     # add(append) google nameserver and create static IP
     # first, blank out file
@@ -80,21 +80,21 @@ then
     sed -i '1s/^/dwc_otg\.speed\=1\ smsc95xx\.turbo_mode\=N\ /' /boot/cmdline.txt
 
     # download the custom config.txt to /boot
-    cp /boot/config.txt /boot/config.txt.orig
-    cp ./ampbrownie/config_ampbrownie.txt /boot/config.txt
+    cp -a /boot/config.txt /boot/config.txt.orig
+    cp -a ./ampbrownie/config_ampbrownie.txt /boot/config.txt
     #wget -4 -O /boot/config.txt https://raw.github.com/adamhub/ampbrownie/master/config_ampbrownie.txt
 
     # copy the guitarix configs and settings to the right place
     mkdir -p /home/pi/.config/guitarix/plugins
-    cp ./ampbrownie/gx_head_rc /home/pi/.config/guitarix/
-    cp ./ampbrownie/ampbrownie.gx /home/pi/.config/guitarix/plugins/
+    cp -a ./ampbrownie/gx_head_rc /home/pi/.config/guitarix/
+    cp -a ./ampbrownie/ampbrownie.gx /home/pi/.config/guitarix/plugins/
     #wget -4 -P /home/pi/.config/guitarix https://raw.github.com/adamhub/ampbrownie/master/gx_head_rc
     #wget -4 -P /home/pi/.config/guitarix/plugins https://raw.github.com/adamhub/ampbrownie/master/ampbrownie.gx
     chown -R pi: /home/pi/.config
     chmod -R 777 /home/pi/.config
 
     # install init scripts so AmpBrownie starts up on boot
-    cp ./ampbrownie/init_scripts/ampbrownie /etc/init.d/
+    cp -a ./ampbrownie/init_scripts/ampbrownie /etc/init.d/
     #wget -4 -P /etc/init.d https://raw.github.com/adamhub/ampbrownie/master/init_scripts/ampbrownie
     update-rc.d ampbrownie defaults
 
