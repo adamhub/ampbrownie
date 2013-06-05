@@ -63,10 +63,9 @@ then
     apt-get update
     echo "Installing Jack and friends"
     apt-get --reinstall install xauth # to make x11 forwarding work
-    #read -p "Jack install will ask you if you want to adjust things for realtime control. Answer yes to that. Press enter now."
     echo "jackd1 jackd/tweak_rt_limits boolean true"|debconf-set-selections
     #DEBCONF_FRONTEND=noninteractive apt-get --no-install-recommends install jackd1
-    apt-get --no-install-recommends -y install jackd1 libcanberra-gtk-module jalv guitarix qjackctl aj-snapshot
+    apt-get --no-install-recommends -y install jackd1 libcanberra-gtk-module guitarix qjackctl aj-snapshot
     
     echo "disabling onboard sound card..."
     # -i is for in stream editing
@@ -82,20 +81,16 @@ then
     # copy the custom config.txt to /boot
     cp /boot/config.txt /boot/config.txt.$(date +%Y%m%d-%H%M)
     cp ./ampbrownie/config_ampbrownie.txt /boot/config.txt
-    #wget -4 -O /boot/config.txt https://raw.github.com/adamhub/ampbrownie/master/config_ampbrownie.txt
 
     # copy the guitarix configs and settings to the right place
     mkdir -p /home/pi/.config/guitarix/plugins
     cp -a ./ampbrownie/gx_head_rc /home/pi/.config/guitarix/
     cp -a ./ampbrownie/ampbrownie.gx /home/pi/.config/guitarix/plugins/
-    #wget -4 -P /home/pi/.config/guitarix https://raw.github.com/adamhub/ampbrownie/master/gx_head_rc
-    #wget -4 -P /home/pi/.config/guitarix/plugins https://raw.github.com/adamhub/ampbrownie/master/ampbrownie.gx
     chown -R pi: /home/pi/.config
     chmod -R 777 /home/pi/.config
 
     # install init scripts so AmpBrownie starts up on boot
     cp -a ./ampbrownie/init_scripts/ampbrownie /etc/init.d/
-    #wget -4 -P /etc/init.d https://raw.github.com/adamhub/ampbrownie/master/init_scripts/ampbrownie
     update-rc.d ampbrownie defaults
 
     echo "Setup has finished. You will want to:
