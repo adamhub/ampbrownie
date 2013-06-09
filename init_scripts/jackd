@@ -53,7 +53,9 @@ case "$1" in
 			log_failure_msg "jackd already running as user $USER; not starting."
 			exit 0
 		fi
-	        log_begin_msg "Starting jackd audio server:" "jackd"
+                log_begin_msg "Starting jackd audio server:" "jackd"
+		/bin/mount -o remount,size=128M /dev/shm > /dev/null 2>&1
+		echo -n performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor > /dev/null 2>&1
 		if start-stop-daemon -b -S -o -q -x $DAEMON -u $USER -a /bin/su -- - $USER -c "$DAEMON $OPTIONS"; then
 			while ! pgrep -u $USER jackd > /dev/null 2>&1; do continue; done
 			pgrep -u $USER jackd > $PIDFILE
