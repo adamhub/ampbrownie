@@ -5,4 +5,4 @@ START_DAEMON=yes
 USER=pi
 
 # Options to pass to jackd
-OPTIONS="-p70 -p16 -t2000 -dalsa -dhw:Device -p128 -n3 -r44100 -Xseq -s"
+OPTIONS="-p84 -p16 -t2000 -dalsa -dhw:Device -p128 -n3 -r44100 -Xseq -s"
