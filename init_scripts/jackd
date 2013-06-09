@@ -1,8 +1,11 @@
-#! /bin/sh
+#!/bin/sh
+#
+# Jackd init script
+#
 ### BEGIN INIT INFO
 # Provides:          jackd
-# Required-Start:    $remote_fs $syslog
-# Required-Stop:     $remote_fs $syslog
+# Required-Start:    $local_fs
+# Required-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: start ampbrownie service
@@ -11,163 +14,123 @@
 
 # Author: Jeremy Jongepier <jeremy@autostatic.com>
 
-# Do NOT "set -e"
+# Defaults
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/usr/bin/jackd
+USER=
+OPTIONS=""
 
-# PATH should only include /usr/* if it runs after the mountnfs.sh script
-PATH=/sbin:/usr/sbin:/bin:/usr/bin
-DESC="jackd optimized for Ampbrownie"
-NAME=jackd
-INIT_NAME=jackd
-DAEMON=$(which jackd)
-DAEMON_ARGS="-P70 -p16 -t2000 -d alsa -dhw:CODEC -X seq -p 128 -n 3 -r 44100 -s &"
-PIDFILE=/var/run/$NAME.pid
-SCRIPTNAME=/etc/init.d/$NAME
-USER=pi
-GROUP=pi
+PIDFILE="/var/run/jackd.pid"
 
-# turning off stuff before start
-sudo service ntp stop
-sudo service triggerhappy stop
-sudo service dbus stop
-sudo killall console-kit-daemon
-sudo killall polkitd
-## Only needed when Jack2 is compiled with D-Bus support
-#export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
-sudo mount -o remount,size=128M /dev/shm
-killall gvfsd
-killall dbus-daemon
-killall dbus-launch
-## Uncomment if you'd like to disable the network adapter completely
-echo -n performance | sudo tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+test -f /etc/default/jackd || exit 0
+. /etc/default/jackd
 
+OPTIONS="$OPTIONS"
 
-# Exit if the package is not installed
-[ -x "$DAEMON" ] || exit 0
+if [ ! "x$START_DAEMON" = "xyes" -a ! "$1" = "stop" ]; then
+	echo "Edit /etc/default/jackd to start jackd"
+	exit 0
+fi
 
-# Read configuration variable file if it is present
-[ -r /etc/default/$INIT_NAME ] && . /etc/default/$INIT_NAME
+test -f $DAEMON || exit 0
 
-# Load the VERBOSE setting and other rcS variables
-. /lib/init/vars.sh
-
-# Define LSB log_* functions.
-# Depend on lsb-base (>= 3.2-14) to ensure that this file is present
-# and status_of_proc is working.
 . /lib/lsb/init-functions
 
-#
-# Function that starts the daemon/service
-#
-do_start()
-{
-	# Return
-	#   0 if daemon has been started
-	#   1 if daemon was already running
-	#   2 if daemon could not be started
-	start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $USER:$GROUP --exec $DAEMON --test > /dev/null \
-		|| return 1
-	start-stop-daemon --start --quiet --pidfile $PIDFILE --chuid $USER:$GROUP --exec $DAEMON -- \
-		$DAEMON_ARGS \
-		|| return 2
-	# Add code here, if necessary, that waits for the process to be ready
-	# to handle requests from services started subsequently which depend
-	# on this one.  As a last resort, sleep for some time.
-}
-
-#
-# Function that stops the daemon/service
-#
-do_stop()
-{
-	# Return
-	#   0 if daemon has been stopped
-	#   1 if daemon was already stopped
-	#   2 if daemon could not be stopped
-	#   other if a failure occurred
-	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --chuid $USER:$GROUP --name $NAME
-	RETVAL="$?"
-	[ "$RETVAL" = 2 ] && return 2
-	# Wait for children to finish too if this is a daemon that forks
-	# and if the daemon is only ever run from this initscript.
-	# If the above conditions are not satisfied then add some other code
-	# that waits for the process to drop all resources that could be
-	# needed by services started subsequently.  A last resort is to
-	# sleep for some time.
-	start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --chuid $USER:$GROUP --exec $DAEMON
-	[ "$?" = 2 ] && return 2
-	# Many daemons don't delete their pidfiles when they exit.
-	rm -f $PIDFILE
-	return "$RETVAL"
-}
-
-#
-# Function that sends a SIGHUP to the daemon/service
-#
-do_reload() {
-	#
-	# If the daemon can reload its configuration without
-	# restarting (for example, when it is sent a SIGHUP),
-	# then implement that here.
-	#
-	start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE --chuid $USER:$GROUP --name $NAME
-	return 0
-}
-
 case "$1" in
-  start)
-	[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC" "$INIT_NAME"
-	do_start
-	case "$?" in
-		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
-		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
-	esac
-	;;
-  stop)
-	[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$INIT_NAME"
-	do_stop
-	case "$?" in
-		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
-		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
-	esac
-	;;
-  status)
-       status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
-       ;;
-  #reload|force-reload)
-	#
-	# If do_reload() is not implemented then leave this commented out
-	# and leave 'force-reload' as an alias for 'restart'.
-	#
-	#log_daemon_msg "Reloading $DESC" "$NAME"
-	#do_reload
-	#log_end_msg $?
-	#;;
-  restart|force-reload)
-	#
-	# If the "reload" option is implemented then remove the
-	# 'force-reload' alias
-	#
-	log_daemon_msg "Restarting $DESC" "$INIT_NAME"
-	do_stop
-	case "$?" in
-	  0|1)
-		do_start
-		case "$?" in
-			0) log_end_msg 0 ;;
-			1) log_end_msg 1 ;; # Old process is still running
-			*) log_end_msg 1 ;; # Failed to start
-		esac
+	start)
+		if test -e $PIDFILE ; then
+			pid=`cat $PIDFILE | sed -e 's/\s.*//'|head -n1`
+			PIDDIR=/proc/$pid
+		    if [ -d ${PIDDIR} -a  "$(readlink -f ${PIDDIR}/exe)" = "${DAEMON}" ]; then
+				log_failure_msg "jackd already started; not starting."
+				exit 0
+			else
+				log_warning_msg "Removing stale PID file $PIDFILE."
+				rm -f $PIDFILE
+			fi
+		fi
+		if pgrep -u $USER jackd > /dev/null 2>&1; then
+			log_failure_msg "jackd already running as user $USER; not starting."
+			exit 0
+		fi
+	        log_begin_msg "Starting jackd audio server:" "jackd"
+		if start-stop-daemon -b -S -o -q -x $DAEMON -u $USER -a /bin/su -- - $USER -c "$DAEMON $OPTIONS"; then
+			while ! pgrep -u $USER jackd > /dev/null 2>&1; do continue; done
+			pgrep -u $USER jackd > $PIDFILE
+			while ! su - $USER -c jack_lsp > /dev/null 2>&1; do
+				sleep 0.1
+			done
+			log_end_msg 0
+		else
+			log_end_msg 1
+			exit 1
+		fi
 		;;
-	  *)
-	  	# Failed to stop
-		log_end_msg 1
+	stop)
+		if ! test -e $PIDFILE ; then
+			log_failure_msg "Pidfile not found! Is jackd running?"
+			exit 0
+		fi
+	        log_begin_msg "Stopping jackd audio server:" "jackd"
+		if start-stop-daemon -m -K -o -q -p $PIDFILE -x $DAEMON -u $USER; then
+                        rm -f $PIDFILE
+			log_end_msg 0
+		else
+			log_end_msg 1
+			exit 1
+		fi
+		if pgrep -u $USER jackd; then
+			killall -9 $DAEMON
+			exit 0
+		fi
 		;;
-	esac
-	;;
-  *)
-	echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
-	exit 3
-	;;
+	force-reload|restart)
+	        log_begin_msg "Restarting jackd audio server:" "jackd"
+		if ! start-stop-daemon -m -K -o -q -p $PIDFILE -x $DAEMON -u $USER; then
+			log_end_msg 1
+			exit 1
+		fi
+		sleep 1
+                rm -f $PIDFILE || true
+		if start-stop-daemon -m -b -S -o -q -p $PIDFILE -x $DAEMON -u $USER -c $USER -a $DAEMON -- $OPTIONS; then
+			log_end_msg 0
+		else
+			log_end_msg 1
+			exit 1
+		fi
+		;;
+	try-restart)
+		if test -e $PIDFILE ; then
+			pid=`cat $PIDFILE | sed -e 's/\s.*//'|head -n1`
+			PIDDIR=/proc/$pid
+			if [ -d ${PIDDIR} -a  "$(readlink -f ${PIDDIR}/exe)" = "${DAEMON}" ]; then
+				$0 restart
+				exit 0
+			fi
+		fi
+		test -f /etc/rc`/sbin/runlevel | cut -d' ' -f2`.d/S*jackd* && $0 start
+		;;
+	awaken)
+	        log_begin_msg "Awakening jackd audio server:" "jackd"
+		if [ -s $PIDFILE ]; then
+			start-stop-daemon -K -s 10 -q -p $PIDFILE -x $DAEMON
+			log_end_msg 0
+			exit 0
+		else
+			log_end_msg 1
+			exit 1
+		fi
+		;;
+	*)
+		log_warning_msg "Usage: /etc/init.d/jackd {start|stop|restart|force-reload|awaken|debug-run}"
+		log_warning_msg "  start - starts system-wide jackd service"
+		log_warning_msg "  stop  - stops system-wide jackd service"
+		log_warning_msg "  restart, force-reload - starts a new system-wide jackd service"
+		log_warning_msg "  awaken - tell system-wide jackd to start a poll cycle immediately"
+		log_warning_msg "  debug-run [strace [strace options...]] - start a debug run of the"
+		log_warning_msg "    system-wide jackd service, optionally running it under strace"
+		exit 1
+		;;
 esac
 
-:
+exit 0

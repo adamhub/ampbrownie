@@ -1,0 +1,8 @@
+# Set to "yes" to start jackd at boot
+START_DAEMON=yes
+
+# The jackd process will run under this user
+USER=pi
+
+# Options to pass to jackd
+OPTIONS="-p70 -p16 -t2000 -dalsa -dhw:Device -p128 -n3 -r44100 -Xseq -s"
