@@ -92,12 +92,15 @@ then
     # install init scripts so AmpBrownie starts up on boot
     cp -a ./ampbrownie/init_scripts/ampbrownie /etc/init.d/
     update-rc.d ampbrownie defaults
+    cp -a ./ampbrownie/init_scripts/jackd.default /etc/init.d/
+    update-rc.d jackd.default defaults
 
     echo "Setup has finished. You will want to:
          - reboot and remove your keyboard and mouse
 	 - have your guitar/soundcard/midi controller hooked up
-         - play some sweet tunes" 
-
+         - play some sweet tunes
+         use \"sudo reboot\" to reboot now." 
+   
 else
     echo "Input not recognized, try again."
 fi
