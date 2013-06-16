@@ -83,17 +83,43 @@ then
     cp ./ampbrownie/config_ampbrownie.txt /boot/config.txt
 
     # copy the guitarix configs and settings to the right place
-    mkdir -p /home/pi/.config/guitarix/plugins
-    cp -a ./ampbrownie/gx_head_rc /home/pi/.config/guitarix/
-    cp -a ./ampbrownie/ampbrownie.gx /home/pi/.config/guitarix/plugins/
-    chown -R pi: /home/pi/.config
-    chmod -R 777 /home/pi/.config
+    mkdir -p /root/.config/guitarix/plugins
+    cp -a ./ampbrownie/gx_head_rc /root/.config/guitarix/
+    cp -a ./ampbrownie/ampbrownie.gx /root/.config/guitarix/plugins/
+
 
     # install init scripts so AmpBrownie starts up on boot
-    cp -a ./ampbrownie/init_scripts/ampbrownie /etc/init.d/
-    update-rc.d ampbrownie defaults
-    cp -a ./ampbrownie/init_scripts/jackd.default /etc/init.d/
-    update-rc.d jackd.default defaults
+    # rc.local, and under root is the only I have got it to work at startup
+    # first, blank out file
+    cat /dev/null > /etc/rc.local
+    # print new contents
+    printf '#!/bin/sh -e
+#
+# rc.local
+#
+# This script is executed at the end of each multiuser runlevel.
+# Make sure that the script will "exit 0" on success or any other
+# value on error.
+#
+# In order to enable or disable this script just change the execution
+# bits.
+#
+# By default this script does nothing.
+
+# Print the IP address
+_IP=$(hostname -I) || true
+if [ "$_IP" ]; then
+  printf "My IP address is %s\n" "$_IP"
+fi
+
+echo ".....starting jackd"
+/usr/bin/jackd -P70 -p16 -t2000 -d alsa -dhw:CODEC -X seq -p 128 -n 3 -r 44100 -s &
+echo ".....starting guitarix"
+guitarix -N
+
+exit 0
+    " >> /etc/rc.local
+
 
     echo "Setup has finished. You will want to:
          - reboot and remove your keyboard and mouse
