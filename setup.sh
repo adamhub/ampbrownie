@@ -98,7 +98,7 @@ then
 # rc.local
 #
 # This script is executed at the end of each multiuser runlevel.
-# Make sure that the script will "exit 0" on success or any other
+# Make sure that the script will \"exit 0\" on success or any other
 # value on error.
 #
 # In order to enable or disable this script just change the execution
@@ -107,10 +107,8 @@ then
 # By default this script does nothing.
 
 # Print the IP address
-_IP=$(hostname -I) || true
-if [ \"$_IP\" ]; then
-  printf \"My IP address is %s\n\" \"$_IP\"
-fi
+# erm...Put that back in later....
+
 
 #start jack, then guitarix
 /usr/bin/jackd -P70 -p16 -t2000 -d alsa -dhw:CODEC -X seq -p 128 -n 3 -r 44100 -s &
