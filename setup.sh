@@ -93,7 +93,7 @@ then
     # first, blank out file
     cat /dev/null > /etc/rc.local
     # print new contents
-    printf '#!/bin/sh -e
+ printf '%s\n' "#!/bin/sh -e
 #
 # rc.local
 #
@@ -108,13 +108,12 @@ then
 
 # Print the IP address
 _IP=$(hostname -I) || true
-if [ "$_IP" ]; then
-  printf "My IP address is %s\n" "$_IP"
+if [ \"$_IP\" ]; then
+  printf \"My IP address is %s\n\" \"$_IP\"
 fi
 
-echo ".....starting jackd"
+#start jack, then guitarix
 /usr/bin/jackd -P70 -p16 -t2000 -d alsa -dhw:CODEC -X seq -p 128 -n 3 -r 44100 -s &
-echo ".....starting guitarix"
 guitarix -N
 
 exit 0
