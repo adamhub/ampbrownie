@@ -106,20 +106,30 @@ then
 #
 # By default this script does nothing.
 
-# Print the IP address
-# erm...Put that back in later....
+#!/bin/bash
+nohup service ntp stop 2>&1 &
+nohup service triggerhappy stop 2>&1 &
+nohup service dbus stop 2>&1 &
+nohup killall console-kit-daemon 2>&1 &
+nohup killall polkitd 2>&1 &
+## Only needed when Jack2 is compiled with D-Bus support
+#export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket
+mount -o remount,size=128M /dev/shm
+nohup killall gvfsd 2>&1 &
+nohup killall dbus-daemon 2>&1 &
+nohup killall dbus-launch 2>&1 &
 
+echo -n performance | tee /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
 
 #start jack, then guitarix
-nohup /usr/bin/jackd -P70 -p16 -t2000 -d alsa -dhw:CODEC -X seq -p 128 -n 3 -r 44100 -s nohup_jackd.out 2>&1 &
+nohup /usr/bin/jackd -P84 -p16 -t2000 -d alsa -dhw:CODEC -X seq -p 128 -n 3 -r 44100 -s nohup_jackd.out 2>&1 &
 nohup guitarix -N > nohup_guitarix.out 2>&1 &
 
-# stupid hack, but aj-snapshot can't restore right away.
+# stupid hack, but aj-can't restore right away.
 sleep 10
 
 # connect everything
 nohup aj-snapshot -r /home/pi/ampbrownie/aj-snapshot.xml  > nohup_aj-snapshot.out 2>&1 &
-
 
 exit 0
     " >> /etc/rc.local
