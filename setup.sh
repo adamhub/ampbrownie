@@ -111,8 +111,15 @@ then
 
 
 #start jack, then guitarix
-/usr/bin/jackd -P70 -p16 -t2000 -d alsa -dhw:CODEC -X seq -p 128 -n 3 -r 44100 -s &
-guitarix -N
+nohup /usr/bin/jackd -P70 -p16 -t2000 -d alsa -dhw:CODEC -X seq -p 128 -n 3 -r 44100 -s nohup_jackd.out 2>&1 &
+nohup guitarix -N > nohup_guitarix.out 2>&1 &
+
+# stupid hack, but aj-snapshot can't restore right away.
+sleep 10
+
+# connect everything
+nohup aj-snapshot -r /home/pi/ampbrownie/aj-snapshot.xml  > nohup_aj-snapshot.out 2>&1 &
+
 
 exit 0
     " >> /etc/rc.local
