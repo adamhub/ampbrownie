@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<alsa> 
+  <client name="System"> 
+    <port id="0" /> 
+    <port id="1" /> 
+  </client> 
+  <client name="Midi Through"> 
+    <port id="0" /> 
+  </client> 
+  <client name="jack_midi" /> 
+</alsa> 
+<jack> 
+  <client name="system"> 
+    <port name="capture_1"> 
+      <connection port="gx_head_amp:in_0" /> 
+    </port> 
+    <port name="capture_2"> 
+      <connection port="gx_head_amp:in_0" /> 
+    </port> 
+  </client> 
+  <client name="alsa_pcm"> 
+    <port name="Midi-Through/midi_capture_1" /> 
+  </client> 
+  <client name="gx_head_amp"> 
+    <port name="out_0"> 
+      <connection port="system:playback_2" /> 
+      <connection port="system:playback_1" /> 
+      <connection port="gx_head_fx:in_0" /> 
+    </port> 
+  </client> 
+  <client name="gx_head_fx"> 
+    <port name="out_0" /> 
+    <port name="out_1" /> 
+  </client> 
+</jack>
